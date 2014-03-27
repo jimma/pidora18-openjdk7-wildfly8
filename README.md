@@ -11,9 +11,9 @@ This pidora18 image is installed with Wildfly-8.0.0.Final and openjdk7. Wildfly 
  dd bs=1m if=[DISK IMAGE NAME] of=[FILESYSTEM]
  ```
  windows user can burn it with Win32DiskImager
-#3.user and password
-  username:root      password:jbosspi  
-  username:jbosspi   password:jbosspi
+#3.Username and password
+  root/jbosspi  
+  jbosspi/jbosspi
 #4.Resize Root filesystem
   After burn this image and start the Pi,you need to log in as root user and run firstboot to resize filesystem to get more disk space, more details please see "FileSystem Setting" in firstboot GUI.
   ```
@@ -21,3 +21,5 @@ This pidora18 image is installed with Wildfly-8.0.0.Final and openjdk7. Wildfly 
   password:
   firstboot
   ```
+#5.Wildfly start script
+   Wildfly is started with Wildfly-8.0.0.Final/bin/start_pi.sh. It will start the standalone.xml profile by default and with flag -b 0.0.0.0 to bind all ip address and localhost.
