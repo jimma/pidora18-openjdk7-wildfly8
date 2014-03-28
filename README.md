@@ -24,6 +24,6 @@ This pidora18 image is installed with Wildfly-8.0.0.Final and openjdk7. Wildfly 
   ```
 #5.Wildfly start script
    Wildfly is started with Wildfly-8.0.0.Final/bin/start_pi.sh. It will start the standalone.xml profile by default and with flag -b 0.0.0.0 to bind all ip address and localhost.
-#6.Configure WIFI dongle and Ethernet network IP address
-   The easy way could be running "init 5" or "startx" to configure network under GUI. 
+#6.Configure WIFI and Ethernet network
+   The easy way could be running "init 5" and configure under GUI. 
    
