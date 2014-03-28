@@ -5,6 +5,7 @@ This pidora18 image is installed with Wildfly-8.0.0.Final and openjdk7. Wildfly 
  wildfly-8.0.0.Final is downloaded under /home/jbosspi
  openjdk7 is installed
  modified /home/jbosspi/.bashrc and added /etc/init.d/wildfly
+ All the modified and new added file can be found in this repository.
 #2.how to burn this image
  mac or linux user:
  ```
