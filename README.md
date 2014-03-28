@@ -14,7 +14,7 @@ This pidora18 image is installed with Wildfly-8.0.0.Final and openjdk7. Wildfly 
 #3.Username and password
   root/jbosspi  
   jbosspi/jbosspi
-#4.Resize Root filesystem
+#4.Resize Root filesystem (**Important**)
   After burn this image and start the Pi,you need to log in as root user and run firstboot to resize filesystem to get more disk space, more details please see "FileSystem Setting" in firstboot GUI.
   ```
   su root
@@ -23,3 +23,6 @@ This pidora18 image is installed with Wildfly-8.0.0.Final and openjdk7. Wildfly 
   ```
 #5.Wildfly start script
    Wildfly is started with Wildfly-8.0.0.Final/bin/start_pi.sh. It will start the standalone.xml profile by default and with flag -b 0.0.0.0 to bind all ip address and localhost.
+#6.Configure WIFI dongle and Ethernet network IP address
+   The easy way could be running "init 5" or "startx" to configure network under GUI. 
+   
