@@ -1,6 +1,6 @@
 pidora18-wildfly8.img
 ==========================
-This pidora18 image is installed with Wildfly-8.0.0.Final and openjdk7. Wildfly start script is added under /etc/init.d, and Wildfly-8.0.0.Final will be started at boot. Download this image from https://www.dropbox.com/s/zqtvlcek6nb0l1q/pidora18-wildfly18.img.gz  
+This pidora18 image is installed with Wildfly-8.0.0.Final and openjdk7. Wildfly start script is added under /etc/init.d, and Wildfly-8.0.0.Final will be started at boot. Download this image from https://www.dropbox.com/s/nub7s1lyhrzjvm9/pidora18-wildfly18.img.zip  
 #1.What's configued/installed 
  wildfly-8.0.0.Final is downloaded under /home/jbosspi
  openjdk7 is installed
