@@ -1,0 +1,93 @@
+#! /bin/bash -p
+### BEGIN INIT INFO
+# Provides: wildfly
+# Required-Start: network
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Bring up/down wildfly
+# Description: Bring up/down wildfly
+### END INIT INFO
+# Source function library.
+. /etc/init.d/functions
+
+wildfly=/home/jbosspi/wildfly-8.0.0.Final/bin/start_pi.sh
+prog=wildfly
+pidfile=/var/run/wildfly.pid
+lockfile=/var/lock/subsys/wildfly
+
+start() {
+    echo -n "Starting $prog: "
+    # We try to determine which architecture we have so we can 
+    # load libv4l to support more USB cameras. x86_64 and ppc64
+    # are both supported by rpmfusion.
+    $wildfly > /home/jbosspi/server.log
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && touch $lockfile
+    return $retval
+}
+
+stop() {
+    echo -n $"Stopping $prog: "
+    killproc $wildfly
+    retval=$?
+    echo
+    [ $retval = 0 ] && rm -f $lockfile
+}
+
+restart() {
+    stop
+    start
+}
+
+reload() {
+    echo -n $"Reloading $prog configuration: "
+    killproc $wildfly -HUP
+    retval=$?
+    echo
+    return $retval
+}
+
+rh_status() { 
+    # run checks to determine if the service is running or use generic status
+    status $prog
+}
+          
+rh_status_q() {
+    rh_status >/dev/null 2>&1
+}
+
+
+# See how we were called.
+case "$1" in
+    start)
+        rh_status_q && exit 0
+        $1
+        ;;
+    stop)
+        rh_status_q || exit 0
+        $1
+        ;;        
+    restart)
+        $1
+        ;;
+    reload)
+        rh_status_q || exit 7
+        $1
+        ;;
+    force-reload)
+        #force_reload
+        reload
+        ;;
+    status)
+        rh_status
+        ;;
+    condrestart|try-restart)
+        rh_status_q || exit 0
+        restart
+        ;;
+    *)
+                echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
+		exit 1
+esac
+exit $?
