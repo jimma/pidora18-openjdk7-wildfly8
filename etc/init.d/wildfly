@@ -9,30 +9,35 @@
 ### END INIT INFO
 # Source function library.
 . /etc/init.d/functions
-
 wildfly=/home/jbosspi/wildfly-8.0.0.Final/bin/start_pi.sh
 prog=wildfly
-pidfile=/var/run/wildfly.pid
-lockfile=/var/lock/subsys/wildfly
+export LAUNCH_JBOSS_IN_BACKGROUND="true"
+export JBOSS_PIDFILE=/home/jbosspi/wildfly-8.0.0.Final/bin/jboss.pid
 
 start() {
-    echo -n "Starting $prog: "
-    # We try to determine which architecture we have so we can 
-    # load libv4l to support more USB cameras. x86_64 and ppc64
-    # are both supported by rpmfusion.
-    $wildfly > /home/jbosspi/server.log
+    echo -n "Starting $prog:"
+    $wildfly > /home/jbosspi/server.log&
     retval=$?
-    echo
-    [ $retval -eq 0 ] && touch $lockfile
     return $retval
 }
 
 stop() {
     echo -n $"Stopping $prog: "
-    killproc $wildfly
-    retval=$?
-    echo
-    [ $retval = 0 ] && rm -f $lockfile
+    if [ -f "$JBOSS_PIDFILE" ]; then
+       pid=`cat "$JBOSS_PIDFILE"`
+       shell_pid=$(ps -ef | awk '$2 ~ /\<'$pid'\>/ { print $3; }')
+       echo "kill pid: $shell_pid"
+       kill $shell_pid
+       if [ "$?" -eq 0 ]; then
+         sleep 10
+         kill -9 $shell_pid &> /dev/null
+       fi
+       kill -9 $pid &> /dev/null
+    else
+       warn "No pid found!"
+    fi
+    echo "exiting stop method"
+    success
 }
 
 restart() {
@@ -40,54 +45,38 @@ restart() {
     start
 }
 
-reload() {
-    echo -n $"Reloading $prog configuration: "
-    killproc $wildfly -HUP
-    retval=$?
-    echo
-    return $retval
+status() {
+	if [ -f $JBOSS_PIDFILE ]; then
+		read ppid < $JBOSS_PIDFILE
+		if [ `ps --pid $ppid 2> /dev/null | grep -c $ppid 2> /dev/null` -eq '1' ]; then
+			echo "$prog is running (pid $ppid)"
+			return 0
+		else
+			echo "$prog dead but pid file exists"
+			return 1
+		fi
+	fi
+	echo "$prog is not running"
+	return 3
 }
 
-rh_status() { 
-    # run checks to determine if the service is running or use generic status
-    status $prog
-}
-          
-rh_status_q() {
-    rh_status >/dev/null 2>&1
-}
-
-
-# See how we were called.
 case "$1" in
-    start)
-        rh_status_q && exit 0
-        $1
-        ;;
-    stop)
-        rh_status_q || exit 0
-        $1
-        ;;        
-    restart)
-        $1
-        ;;
-    reload)
-        rh_status_q || exit 7
-        $1
-        ;;
-    force-reload)
-        #force_reload
-        reload
-        ;;
-    status)
-        rh_status
-        ;;
-    condrestart|try-restart)
-        rh_status_q || exit 0
-        restart
-        ;;
-    *)
-                echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		$0 stop
+		$0 start
+		;;
+	status)
+		status
+		;;
+	*)
+		## If no parameters are given, print which are avaiable.
+		echo "Usage: $0 {start|stop|status|restart}"
 		exit 1
+		;;
 esac
-exit $?
